@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+body {
+  background-color: #fbf7ef;
+  color: #2b2118;
+  font-family: 'Jost', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Luxury gold text gradient matching reference site */
+.gold-t {
+  background: linear-gradient(90deg, #9a7440, #e3c88f, #b8935a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Continuous infinite marquee */
+.mq {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: mq 45s linear infinite;
+}
+
+.mq:hover {
+  animation-play-state: paused;
+}
+
+@keyframes mq {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Floating jewelry badges */
+@keyframes fl {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.fl {
+  animation: fl 6s ease-in-out infinite;
+}
+
+/* Luxury custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f4ebdb;
+}
+::-webkit-scrollbar-thumb {
+  background: #b8935a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9a7440;
+}

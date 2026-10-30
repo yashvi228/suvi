@@ -1,0 +1,1 @@
+"""SUVI Jewellery Backend Package"""
