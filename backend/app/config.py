@@ -9,8 +9,8 @@ class Settings:
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     
-    # Database URL: default tries postgresql, falls back to sqlite if postgresql unavailable
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/suvi_db")
+    # Database URL: default tries postgresql with psycopg2, falls back to sqlite if postgresql unavailable
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/suvi_db")
     SQLITE_FALLBACK_URL: str = "sqlite:///./suvi.db"
 
 settings = Settings()

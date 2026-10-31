@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, DollarSign, ShoppingBag, Users, AlertTriangle, Plus, Trash2, Edit3, CheckCircle, RefreshCw } from 'lucide-react';
+import { Shield, DollarSign, ShoppingBag, Users, AlertTriangle, Plus, Trash2, Edit3, CheckCircle, RefreshCw, Upload } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { inr, formatDate } from '../utils/formatters';
@@ -17,6 +17,7 @@ export default function AdminDashboard({ onOpenAuth }) {
 
   // Add Product Modal
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [newProdName, setNewProdName] = useState('');
   const [newProdSlug, setNewProdSlug] = useState('');
   const [newProdCatId, setNewProdCatId] = useState(1);
@@ -93,6 +94,24 @@ export default function AdminDashboard({ onOpenAuth }) {
       setProducts(products.filter((p) => p.id !== prodId));
     } catch (err) {
       alert('Failed to delete product');
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const res = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setNewProdImage(res.data.url);
+    } catch (err) {
+      alert(err.response?.data?.detail || 'Failed to upload image');
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -455,13 +474,39 @@ export default function AdminDashboard({ onOpenAuth }) {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase tracking-wider text-ink/70 mb-1">High-Res Image URL</label>
-                  <input
-                    value={newProdImage}
-                    onChange={(e) => setNewProdImage(e.target.value)}
-                    placeholder="https://images.unsplash.com/…"
-                    className="w-full bg-cream/40 border border-gold/40 p-2 outline-none"
-                  />
+                  <label className="block text-[10px] uppercase tracking-wider text-ink/70 mb-1">
+                    Jewellery Photography (Upload Image or Paste URL)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      value={newProdImage}
+                      onChange={(e) => setNewProdImage(e.target.value)}
+                      placeholder="https://... or /uploads/... or /images/..."
+                      className="flex-1 bg-cream/40 border border-gold/40 p-2 outline-none font-sans"
+                    />
+                    <label className="cursor-pointer bg-ink text-ivory px-3 py-2 text-[10px] uppercase tracking-wider hover:bg-gold transition flex items-center gap-1.5 shrink-0 font-medium">
+                      <Upload size={12} />
+                      <span>{uploadingImage ? 'Uploading…' : 'Upload File'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                      />
+                    </label>
+                  </div>
+                  {newProdImage && (
+                    <div className="mt-2.5 flex items-center gap-3 p-2 bg-cream/30 border border-gold/30 rounded-sm">
+                      <div className="w-12 h-14 bg-cream overflow-hidden rounded-sm border border-gold/40 shrink-0">
+                        <img src={newProdImage} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="truncate text-[10px] text-ink/70">
+                        <p className="font-medium text-ink truncate">Image Preview Loaded</p>
+                        <p className="truncate text-ink/50">{newProdImage}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-3 pt-3">

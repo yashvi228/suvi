@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import get_engine, Base, SessionLocal
 from app.seed import seed_database
+import os
+from starlette.staticfiles import StaticFiles
 from app.routers import (
     auth_router,
     categories_router,
@@ -15,7 +17,8 @@ from app.routers import (
     wishlist_router,
     coupons_router,
     user_router,
-    admin_router
+    admin_router,
+    upload_router
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -64,6 +67,12 @@ app.include_router(wishlist_router.router, prefix=settings.API_V1_STR)
 app.include_router(coupons_router.router, prefix=settings.API_V1_STR)
 app.include_router(user_router.router, prefix=settings.API_V1_STR)
 app.include_router(admin_router.router, prefix=settings.API_V1_STR)
+app.include_router(upload_router.router, prefix=settings.API_V1_STR)
+
+# Mount static files for uploaded jewelry images
+UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "uploads")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 @app.get("/")
 def root():
